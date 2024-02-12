@@ -104,3 +104,17 @@ def log_method(f):
             Logger.log_method_finish(f, str(e))
             raise e
     return decorated
+
+
+def log_func_async(f):
+    @wraps(f)
+    async def decorated(*args, **kwargs):
+        try:
+            Logger.log_method_start(f)
+            result = await f(*args, **kwargs)
+            Logger.log_method_finish(f)
+            return result
+        except Exception as e:
+            Logger.log_method_finish(f, str(e))
+            raise e
+    return decorated

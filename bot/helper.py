@@ -10,7 +10,7 @@ class Bot:
     @log_func
     def get_random_email(string_for_random_emails: str):
         email_length = 6
-        email_provider = "@gmail"
+        email_provider = "@gmail.com"
         email_signs = []
         for i in range(email_length):
             n = random.randrange(0, len(string_for_random_emails))
@@ -43,6 +43,7 @@ class Bot:
                 "password": password,
                 "token": token,
             })
+            break
         return users
 
     @staticmethod
@@ -68,6 +69,9 @@ class Bot:
     @classmethod
     @log_method
     def run_app_bot(cls):
+        # token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImlzcyI6InN0YXJuYXZpIiwiZXhwIjoxNzA3NzQ4OTY3fQ.tzpFWjUbffCbRzxlquq8EDi-YzR47ULwj4bQCND4Qf8"
+        # print(Actions.get_user_activity(token))
+        # return
         users = cls.create_users()
         for user in users:
             token: str = user["token"]
@@ -80,8 +84,9 @@ class Bot:
                 Actions.dislike_posts(token)
 
             Actions.login_user(user["email"], user["password"])
-            Actions.get_user_activity(token)
+            activities = Actions.get_user_activity(token)
+            print(activities)
 
-        analytics = Actions.get_posts_analytics(config["start_at"], config["end_at"])
-        print(analytics)
+        # analytics = Actions.get_posts_analytics(config["start_at"], config["end_at"])
+        # print(analytics)
 

@@ -1,26 +1,24 @@
 from datetime import datetime
 import random
 
-from flask import Blueprint, request
-from flask_pydantic import validate
+from fastapi import APIRouter, Depends, HTTPException
 
 from api.validation_schemas.post import PostCreateQueryParamsSchema, PostLikesQueryParamsSchema
 from api.controllers.post_controller import PostController
 from api.utils import authorize, make_response
 from logger import log_func
 
+router = APIRouter()
 
-post = Blueprint('post', __name__, template_folder='templates')
 
-
-@post.route("/", methods=['POST'])
+@router.post("/post/", tags=["user"])
 @log_func
-@authorize(request)
-@validate()
+# @authorize(request)
 @make_response
-def create(query: PostCreateQueryParamsSchema) -> None:
+async def create(query: PostCreateQueryParamsSchema) -> None:
     content: str = query.content
-    user_id: int = request.user_id
+    request = {}
+    user_id: int = request['user_id']
     post_data = {
         "user_id": user_id,
         "created_at": datetime.now(),
@@ -30,12 +28,13 @@ def create(query: PostCreateQueryParamsSchema) -> None:
     PostController.create_new_user_post(post_data)
 
 
-@post.route("/like", methods=['PUT'])
+@router.put("/post/like", tags=["post"])
 @log_func
-@authorize(request)
+# @authorize(request)
 @make_response
-def like_post() -> None:
-    user_id: int = request.user_id
+async def like_post() -> None:
+    request = {}
+    user_id: int = request['user_id']
     posts = PostController.get_posts()
     while True:
         n = random.randrange(0, len(posts))
@@ -52,12 +51,13 @@ def like_post() -> None:
             break
 
 
-@post.route("/dislike", methods=['PUT'])
+@router.put("/post/dislike", tags=["post"])
 @log_func
-@authorize(request)
+# @authorize(request)
 @make_response
 def dislike_post() -> None:
-    user_id: int = request.user_id
+    request = {}
+    user_id: int = request['user_id']
     posts = PostController.get_posts()
     while True:
         n = random.randrange(0, len(posts))
@@ -68,9 +68,8 @@ def dislike_post() -> None:
             break
 
 
-@post.route("/analytics", methods=['GET'])
+@router.get("/post/analytics", tags=["post"])
 @log_func
-@validate()
 @make_response
 def get_analytics(query: PostLikesQueryParamsSchema) -> list:
     start_at: datetime = datetime.strptime(query.start_at, "%Y-%m-%d")

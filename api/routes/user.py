@@ -1,22 +1,26 @@
-from flask import Blueprint, request
-from flask_pydantic import validate
+from fastapi import APIRouter, Depends, Query
 
+from typing import Annotated
+
+from api.dependencies import get_user
 
 from api.validation_schemas.user import UserSignupQueryParamsSchema
 from api.controllers.user_controller import UserController
-from api.utils import authorize, make_response, hash_password
+from api.utils import hash_password, make_response_async
 
 from messages import messages
-from logger import log_func
+from logger import log_func_async
 
-user = Blueprint('user', __name__, template_folder='templates')
+router = APIRouter(
+    prefix="/user",
+    tags=["user"],
+)
 
 
-@user.route("/signup", methods=['PUT'])
-@log_func
-@validate()
-@make_response
-def signup(query: UserSignupQueryParamsSchema):
+@router.put("/signup/", tags=["user"])
+@log_func_async
+@make_response_async
+async def signup(query: UserSignupQueryParamsSchema):
     password_hash = hash_password(query.password)
     user_data = UserController.validate_user_signup_schema(query.email, password_hash)
     is_user_exist = UserController.check_if_user_email_exists(query.email)
@@ -28,13 +32,12 @@ def signup(query: UserSignupQueryParamsSchema):
     return token["access_token"]
 
 
-@user.route("/login", methods=['GET'])
-@log_func
-@validate()
-@make_response
-def login(query: UserSignupQueryParamsSchema):
-    password_hash = hash_password(query.password)
-    user_id = UserController.get_user_id(query.email, password_hash)
+@router.get("/login", tags=["user"])
+@log_func_async
+@make_response_async
+async def login(email: Annotated[str, Query(min_length=3, max_length=50)], password: str):
+    password_hash = hash_password(password)
+    user_id = UserController.get_user_id(email, password_hash)
     if not user_id:
         raise Exception(messages["USER_NOT_FOUND"])
 
@@ -43,10 +46,9 @@ def login(query: UserSignupQueryParamsSchema):
     return token["access_token"]
 
 
-@user.route("/activity", methods=['GET'])
-@log_func
-@authorize(request)
-@make_response
-def get_user_activities():
-    activities: dict = UserController.get_user_last_login_and_action(request.user_id)
+@router.get("/activity", tags=["user"])
+@log_func_async
+@make_response_async
+async def get_user_activities(user_id: Annotated[int, Depends(get_user)]):
+    activities: dict = UserController.get_user_last_login_and_action(user_id)
     return activities

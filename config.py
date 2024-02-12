@@ -1,6 +1,6 @@
 config = {
   "host": "http://localhost",
-  "port": 5000,
+  "port": 8080,
   "password_key": b"secret key",
   "JWT_ACCESS_TOKEN": "sdf#$ssdfs",
   "JWT_REFRESH_TOKEN": "sdsdf@#sdfsdgsdf",

@@ -1,8 +1,12 @@
-from api import run_api
+import os
+
+
+def run():
+    try:
+        os.system('uvicorn api.main:app --reload --port=8080')
+    except Exception as e:
+        print(f"Failed to run API: {e}")
 
 
 if __name__ == "__main__":
-    try:
-        run_api()
-    except Exception as e:
-        print(f"Failed to run api: {e}")
+    run()
