@@ -69,21 +69,21 @@ class Bot:
     @classmethod
     @log_method
     def run_app_bot(cls):
-        # users = cls.create_users()
-        # for user in users:
-        #     token: str = user["token"]
-        #     cls.create_user_posts(token)
-        #
-        #     for i in range(config["max_likes_per_user"]):
-        #         Actions.like_posts(token)
-        #
-        #     for i in range(config["max_dislikes_per_user"]):
-        #         Actions.dislike_posts(token)
-        #
-        #     Actions.login_user(user["email"], user["password"])
-        #     activities = Actions.get_user_activity(token)
-        #     print(activities)
+        users = cls.create_users()
+        for user in users:
+            token: str = user["token"]
+            cls.create_user_posts(token)
 
-        analytics = Actions.get_posts_analytics(config["start_at"], config["end_at"])
-        print(analytics)
+            for i in range(config["max_likes_per_user"]):
+                Actions.like_posts(token)
+
+            for i in range(config["max_dislikes_per_user"]):
+                Actions.dislike_posts(token)
+
+            Actions.login_user(user["email"], user["password"])
+            activities = Actions.get_user_activity(token)
+            print(activities)
+
+        # analytics = Actions.get_posts_analytics(config["start_at"], config["end_at"])
+        # print(analytics)
 
