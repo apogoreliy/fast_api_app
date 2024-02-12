@@ -9,7 +9,7 @@ from api.models import engine, User
 from api.jwt_helper import JWTHelper
 
 from messages import messages
-from logger import log_func, log_func_async
+from logger import log_func
 
 
 class UserController:

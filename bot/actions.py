@@ -47,7 +47,7 @@ class Actions:
             headers={
                 "Authorization": f"Bearer {token}"
             },
-            params={
+            json={
                 "content": content
             }
         )

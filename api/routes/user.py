@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.put("/signup/", tags=["user"])
+@router.put("/signup")
 @log_func_async
 @make_response_async
 async def signup(query: UserSignupQueryParamsSchema):
@@ -32,7 +32,7 @@ async def signup(query: UserSignupQueryParamsSchema):
     return token["access_token"]
 
 
-@router.get("/login", tags=["user"])
+@router.get("/login")
 @log_func_async
 @make_response_async
 async def login(email: Annotated[str, Query(min_length=3, max_length=50)], password: str):
@@ -46,7 +46,7 @@ async def login(email: Annotated[str, Query(min_length=3, max_length=50)], passw
     return token["access_token"]
 
 
-@router.get("/activity", tags=["user"])
+@router.get("/activity")
 @log_func_async
 @make_response_async
 async def get_user_activities(user_id: Annotated[int, Depends(get_user)]):
